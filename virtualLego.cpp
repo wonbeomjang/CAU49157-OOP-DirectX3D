@@ -108,21 +108,23 @@ public:
 	
 	void hitBy(CSphere& ball) 
 	{
-		if(!hasIntersected(ball)) return;
+		if (!hasIntersected(ball)) {
+			return;
+		};
         double target_vel_angle, origin_vel_angle;
         double dis_x, dis_z;
         double target_velocity_x, target_velocity_z;
         double velocity_distance_coordinate;
 
-        origin_vel_angle = acos(ball.m_velocity_x / sqrt(pow(ball.m_velocity_x, 2)+pow(ball.m_velocity_z, 2)))
+		origin_vel_angle = acos(ball.m_velocity_x / sqrt(pow(ball.m_velocity_x, 2) + pow(ball.m_velocity_z, 2)));
 
         dis_x = ball.center_x - center_x;
         dis_z = ball.center_z - center_z;
-        velocity_distance_coordinate = (ball.m_velocity_x * dis_x + ball.m_velocity_z * dis_z) / sqrt(dis_x * dis_x + dis_z * dis_z);
-        target_vel_angle = acos(velocity_distance_coordinate / sqrt(m_velocity_x * m_velocity_x + m_velocity_y * m_velocity_y));
+		velocity_distance_coordinate = (ball.m_velocity_x * dis_x + ball.m_velocity_z * dis_z) / sqrt(dis_x * dis_x + dis_z * dis_z);
+		target_vel_angle = acos(velocity_distance_coordinate / sqrt(m_velocity_x * m_velocity_x + m_velocity_z * m_velocity_z));
 
         target_velocity_x = ball.m_velocity_x * cos(origin_vel_angle - target_vel_angle);
-        target_velocity_z = ball.m_velocity_y * cos(origin_vel_angle - target_vel_angle);
+        target_velocity_z = ball.m_velocity_z * cos(origin_vel_angle - target_vel_angle);
 
         ball.m_velocity_x = ball.m_velocity_x - target_velocity_x;
         ball.m_velocity_z = ball.m_velocity_z - target_velocity_z;
@@ -411,9 +413,9 @@ bool Setup()
 	// create plane and set the position
     if (false == g_legoPlane.create(Device, -1, -1, 9, 0.03f, 6, d3d::GREEN)) return false;
     g_legoPlane.setPosition(0.0f, -0.0006f / 5, 0.0f);
-	
+	// bool create(IDirect3DDevice9 * pDevice, float ix, float iz, float iwidth, float iheight, float idepth, D3DXCOLOR color = d3d::WHITE)
 	// create walls and set the position. note that there are four walls
-	if (false == g_legowall[0].create(Device, -1, -1, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
+	if (false == g_legowall[0].create(Device, -1, -0, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
 	g_legowall[0].setPosition(0.0f, 0.12f, 3.06f);
 	if (false == g_legowall[1].create(Device, -1, -1, 9, 0.3f, 0.12f, d3d::DARKRED)) return false;
 	g_legowall[1].setPosition(0.0f, 0.12f, -3.06f);
