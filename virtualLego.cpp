@@ -2,7 +2,7 @@
 //
 // File: virtualLego.cpp
 //
-// Original Author: ¹ÚÃ¢Çö Chang-hyeon Park, 
+// Original Author: ï¿½ï¿½Ã¢ï¿½ï¿½ Chang-hyeon Park, 
 // Modified by Bong-Soo Sohn and Dong-Jun Kim
 // 
 // Originally programmed for Virtual LEGO. 
@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cassert>
+#include <cmath>
 
 IDirect3DDevice9* Device = NULL;
 
@@ -101,14 +102,33 @@ public:
 	
     bool hasIntersected(CSphere& ball) 
 	{
-		// Insert your code here.
-
-		return false;
+		return pow(center_x - ball.center_x, 2) + pow(center_z - ball.center_z, 2) 
+        < pow(m_radius + ball.m_radius, 2);
 	}
 	
 	void hitBy(CSphere& ball) 
-	{ 
-		// Insert your code here.
+	{
+		if(!hasIntersected(ball)) return;
+        double target_vel_angle, origin_vel_angle;
+        double dis_x, dis_z;
+        double target_velocity_x, target_velocity_z;
+        double velocity_distance_coordinate;
+
+        origin_vel_angle = acos(ball.m_velocity_x / sqrt(pow(ball.m_velocity_x, 2)+pow(ball.m_velocity_z, 2)))
+
+        dis_x = ball.center_x - center_x;
+        dis_z = ball.center_z - center_z;
+        velocity_distance_coordinate = (ball.m_velocity_x * dis_x + ball.m_velocity_z * dis_z) / sqrt(dis_x * dis_x + dis_z * dis_z);
+        target_vel_angle = acos(velocity_distance_coordinate / sqrt(m_velocity_x * m_velocity_x + m_velocity_y * m_velocity_y));
+
+        target_velocity_x = ball.m_velocity_x * cos(origin_vel_angle - target_vel_angle);
+        target_velocity_z = ball.m_velocity_y * cos(origin_vel_angle - target_vel_angle);
+
+        ball.m_velocity_x = ball.m_velocity_x - target_velocity_x;
+        ball.m_velocity_z = ball.m_velocity_z - target_velocity_z;
+
+        m_velocity_x = target_velocity_x;
+        m_velocity_z = target_velocity_z;
 	}
 
 	void ballUpdate(float timeDiff) 
@@ -535,10 +555,10 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
 				D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
 				double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
-					pow(targetpos.z - whitepos.z, 2)));		// ±âº» 1 »çºÐ¸é
-				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 »çºÐ¸é
-				if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 »çºÐ¸é
-				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 »çºÐ¸é
+					pow(targetpos.z - whitepos.z, 2)));		// ï¿½âº» 1 ï¿½ï¿½Ð¸ï¿½
+				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 ï¿½ï¿½Ð¸ï¿½
+				if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 ï¿½ï¿½Ð¸ï¿½
+				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 ï¿½ï¿½Ð¸ï¿½
 				double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
 				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
 
