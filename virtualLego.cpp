@@ -41,6 +41,7 @@ D3DXMATRIX g_mProj;
 #define PI 3.14159265
 #define M_HEIGHT 0.01
 #define DECREASE_RATE 0.9982
+#define COR 0.01
 
 // -----------------------------------------------------------------------------
 // CSphere class definition
@@ -112,6 +113,22 @@ public:
 		if (!hasIntersected(ball)) {
 			return;
 		};
+		float dx = center_x - ball.center_x;
+		float dz = center_z - ball.center_z;
+		float distance = fabsf(sqrtf(dx * dx + dz * dz));
+
+		float sin_theta = dz / distance;
+		float cos_theta = dx / distance;
+
+		float temp_m_velocity_x = ball.m_velocity_x * cos_theta + ball.m_velocity_z * sin_theta;
+		float temp_ball_m_velocity_x = m_velocity_x * cos_theta + m_velocity_z * sin_theta;
+		float temp_m_velocity_z = -m_velocity_x * sin_theta + m_velocity_z * cos_theta;
+		float temp_ball_m_velocity_z = -ball.m_velocity_x * sin_theta + ball.m_velocity_z * cos_theta;
+
+		m_velocity_x = temp_m_velocity_x * cos_theta - temp_m_velocity_z * sin_theta;
+		m_velocity_z = temp_m_velocity_x * sin_theta + temp_m_velocity_z * cos_theta;
+		ball.m_velocity_x = temp_ball_m_velocity_x * cos_theta - temp_ball_m_velocity_z * sin_theta;
+		ball.m_velocity_z = temp_ball_m_velocity_x * sin_theta + temp_ball_m_velocity_z * cos_theta;
 	}
 
 	void ballUpdate(float timeDiff) 
@@ -529,6 +546,7 @@ bool Display(float timeDelta)
 
 LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	static int tern = 1;
 	static bool wire = false;
 	static bool isReset = true;
     static int old_x = 0;
@@ -557,14 +575,17 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             case VK_SPACE:
 				
 				D3DXVECTOR3 targetpos = g_target_blueball.getCenter();
-				D3DXVECTOR3	whitepos = g_sphere[3].getCenter();
+				D3DXVECTOR3	whitepos = g_sphere[2 + tern].getCenter();
 				double theta = acos(sqrt(pow(targetpos.x - whitepos.x, 2)) / sqrt(pow(targetpos.x - whitepos.x, 2) +
 					pow(targetpos.z - whitepos.z, 2)));		// �⺻ 1 ��и�
 				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x >= 0) { theta = -theta; }	//4 ��и�
 				if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 ��и�
 				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 ��и�
 				double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
-				g_sphere[3].setPower(distance * cos(theta), distance * sin(theta));
+				g_sphere[2 + tern].setPower(distance * cos(theta), distance * sin(theta)); // edit
+
+				tern++;
+				tern %= 2;
 
 				break;
 
