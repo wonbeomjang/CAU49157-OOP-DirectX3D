@@ -21,6 +21,7 @@
 
 #define EPSILON 0.001f
 #define INFINITY FLT_MAX
+#define SPEEDUPFACT 1000
 
 
 namespace d3d

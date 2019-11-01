@@ -110,9 +110,8 @@ public:
 	
 	void hitBy(CSphere& ball) 
 	{
-		if (!hasIntersected(ball)) {
-			return;
-		};
+		if (!hasIntersected(ball)) return;
+
 		float dx = center_x - ball.center_x;
 		float dz = center_z - ball.center_z;
 		float distance = fabsf(sqrtf(dx * dx + dz * dz));
@@ -129,6 +128,7 @@ public:
 		m_velocity_z = temp_m_velocity_x * sin_theta + temp_m_velocity_z * cos_theta;
 		ball.m_velocity_x = temp_ball_m_velocity_x * cos_theta - temp_ball_m_velocity_z * sin_theta;
 		ball.m_velocity_z = temp_ball_m_velocity_x * sin_theta + temp_ball_m_velocity_z * cos_theta;
+
 	}
 
 	void ballUpdate(float timeDiff) 
@@ -142,23 +142,12 @@ public:
 		{
 			float tX = cord.x + TIME_SCALE*timeDiff*m_velocity_x;
 			float tZ = cord.z + TIME_SCALE*timeDiff*m_velocity_z;
-
-			//correction of position of ball
-			// Please uncomment this part because this correction of ball position is necessary when a ball collides with a wall
-			/*if(tX >= (4.5 - M_RADIUS))
-				tX = 4.5 - M_RADIUS;
-			else if(tX <=(-4.5 + M_RADIUS))
-				tX = -4.5 + M_RADIUS;
-			else if(tZ <= (-3 + M_RADIUS))
-				tZ = -3 + M_RADIUS;
-			else if(tZ >= (3 - M_RADIUS))
-				tZ = 3 - M_RADIUS;*/
 			
 			this->setCenter(tX, cord.y, tZ);
 		}
 		else { this->setPower(0,0);}
 		//this->setPower(this->getVelocity_X() * DECREASE_RATE, this->getVelocity_Z() * DECREASE_RATE);
-		double rate = 1 -  (1 - DECREASE_RATE)*timeDiff * 400;
+		double rate = 1 -  (1 - DECREASE_RATE)*timeDiff * 400 * SPEEDUPFACT;
 		if(rate < 0 )
 			rate = 0;
 		this->setPower(getVelocity_X() * rate, getVelocity_Z() * rate);
@@ -582,7 +571,7 @@ LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				if (targetpos.z - whitepos.z >= 0 && targetpos.x - whitepos.x <= 0) { theta = PI - theta; } //2 ��и�
 				if (targetpos.z - whitepos.z <= 0 && targetpos.x - whitepos.x <= 0){ theta = PI + theta; } // 3 ��и�
 				double distance = sqrt(pow(targetpos.x - whitepos.x, 2) + pow(targetpos.z - whitepos.z, 2));
-				g_sphere[2 + tern].setPower(distance * cos(theta), distance * sin(theta)); // edit
+				g_sphere[2 + tern].setPower(distance * cos(theta) * SPEEDUPFACT, distance * sin(theta) * SPEEDUPFACT); // edit
 
 				tern++;
 				tern %= 2;
