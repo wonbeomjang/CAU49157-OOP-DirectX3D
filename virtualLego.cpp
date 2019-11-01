@@ -26,7 +26,7 @@ const int Height = 768;
 
 // There are four balls
 // initialize the position (coordinate) of each ball (ball0 ~ ball3)
-const float spherePos[4][2] = { {-2.7f,0} , {+2.4f,0} , {3.3f,0} , {-2.7f,-0.9f}}; 
+const float spherePos[4][2] = { {-2.7f,1} , {+2.4f,1} , {3.3f,-1} , {-2.7f,-1}}; 
 // initialize the color of each ball (ball0 ~ ball3)
 const D3DXCOLOR sphereColor[4] = {d3d::RED, d3d::RED, d3d::YELLOW, d3d::WHITE};
 
@@ -58,7 +58,7 @@ public:
     {
         D3DXMatrixIdentity(&m_mLocal);
         ZeroMemory(&m_mtrl, sizeof(m_mtrl));
-        m_radius = 0;
+        m_radius = M_RADIUS;
 		m_velocity_x = 0;
 		m_velocity_z = 0;
         m_pSphereMesh = NULL;
@@ -102,8 +102,9 @@ public:
 	
     bool hasIntersected(CSphere& ball) 
 	{
-		return pow(center_x - ball.center_x, 2) + pow(center_z - ball.center_z, 2) 
-        < pow(m_radius + ball.m_radius, 2);
+		float ball_distance = (center_x - ball.center_x) * (center_x - ball.center_x) + (center_z - ball.center_z) * (center_z - ball.center_z);
+		if (ball_distance > (ball.m_radius + m_radius)*(ball.m_radius + m_radius)) return false;
+		else return true;
 	}
 	
 	void hitBy(CSphere& ball) 
@@ -111,26 +112,6 @@ public:
 		if (!hasIntersected(ball)) {
 			return;
 		};
-        double target_vel_angle, origin_vel_angle;
-        double dis_x, dis_z;
-        double target_velocity_x, target_velocity_z;
-        double velocity_distance_coordinate;
-
-		origin_vel_angle = acos(ball.m_velocity_x / sqrt(pow(ball.m_velocity_x, 2) + pow(ball.m_velocity_z, 2)));
-
-        dis_x = ball.center_x - center_x;
-        dis_z = ball.center_z - center_z;
-		velocity_distance_coordinate = (ball.m_velocity_x * dis_x + ball.m_velocity_z * dis_z) / sqrt(dis_x * dis_x + dis_z * dis_z);
-		target_vel_angle = acos(velocity_distance_coordinate / sqrt(m_velocity_x * m_velocity_x + m_velocity_z * m_velocity_z));
-
-        target_velocity_x = ball.m_velocity_x * cos(origin_vel_angle - target_vel_angle);
-        target_velocity_z = ball.m_velocity_z * cos(origin_vel_angle - target_vel_angle);
-
-        ball.m_velocity_x = ball.m_velocity_x - target_velocity_x;
-        ball.m_velocity_z = ball.m_velocity_z - target_velocity_z;
-
-        m_velocity_x = target_velocity_x;
-        m_velocity_z = target_velocity_z;
 	}
 
 	void ballUpdate(float timeDiff) 
@@ -263,12 +244,33 @@ public:
 	
 	bool hasIntersected(CSphere& ball) 
 	{
-		// Insert your code here.
+		D3DXVECTOR3 ball_center = ball.getCenter();
+		float ball_radius = ball.getRadius();
+		if (!m_x && m_z > 0 && ball_center.z + ball_radius > m_z - m_depth) return true;
+		if (!m_x && m_z < 0 && ball_center.z - ball_radius < m_z + m_depth) return true;
+		if (!m_z && m_x > 0 && ball_center.x + ball_radius > m_x - m_width) return true;
+		if (!m_z && m_x < 0 && ball_center.x - ball_radius < m_x + m_width) return true;
 		return false;
 	}
 
 	void hitBy(CSphere& ball) 
 	{
+		if (!hasIntersected(ball))
+			return;
+
+		D3DXVECTOR3 ball_center = ball.getCenter();
+		float ball_radius = ball.getRadius();
+		if (!m_x) {
+			ball.setPower(ball.getVelocity_X(), -ball.getVelocity_Z());
+			if (m_z > 0) ball.setCenter(ball_center.x, ball_center.y, m_z - m_depth - ball_radius);
+			else ball.setCenter(ball_center.x, ball_center.y, m_z + m_depth + ball_radius);
+		}
+		if (!m_z) {
+			ball.setPower(-ball.getVelocity_X(), ball.getVelocity_Z());
+			if(m_x > 0) ball.setCenter(m_x - m_width - ball_radius, ball_center.y, ball_center.z);
+			else ball.setCenter(m_x + m_width + ball_radius, ball_center.y, ball_center.z);
+		}
+
 		// Insert your code here.
 	}    
 	
