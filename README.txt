@@ -1,8 +1,8 @@
 # Project#3 : OOP for Billiard Game  
 ## Student Infromation  
-*Name*        : Wonbeom Jang 장원범  
-*Student ID*  : 20182592  
-*Depertment*  : School of Computer Science and Engineering  
+Name        : Wonbeom Jang 장원범  
+Student ID  : 20182592  
+Depertment  : School of Computer Science and Engineering  
 
 ## How to run
 1. double click click BilliardBoardGame.exe  
