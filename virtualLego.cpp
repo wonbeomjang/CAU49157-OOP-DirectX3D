@@ -119,6 +119,9 @@ public:
 		float sin_theta = dz / distance;
 		float cos_theta = dx / distance;
 
+		ball.center_x = center_x - (ball.m_radius + m_radius) * cos_theta;
+		ball.center_z = center_z - (ball.m_radius + m_radius) * sin_theta;
+
 		float temp_m_velocity_x = ball.m_velocity_x * cos_theta + ball.m_velocity_z * sin_theta;
 		float temp_ball_m_velocity_x = m_velocity_x * cos_theta + m_velocity_z * sin_theta;
 		float temp_m_velocity_z = -m_velocity_x * sin_theta + m_velocity_z * cos_theta;
