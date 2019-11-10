@@ -1,8 +1,14 @@
 # Project#3 : OOP for Billiard Game  
+
 ## Student Infromation  
 *Name*        : Wonbeom Jang 장원범  
 *Student ID*  : 20182592  
 *Depertment*  : School of Computer Science and Engineering  
+
+## System Encironment
+OS          : Window10  
+IDE         : Visual Studio 2019  
+compliter   : MSC 18.0.21005.1  
 
 ## How to run
 1. double click click BilliardBoardGame.exe  
@@ -26,6 +32,26 @@ void CWall::hitBy(CSphere& ball)
 d3dUtility.h  
 ```c++
 #define SPEEDUPFACT 10
+```
+
+virtualLego.cpp  
+```c++
+void CShpare::ballUpdate(float timeDiff) {
+    ...
+	double rate = 1 -  (1 - DECREASE_RATE)*timeDiff * 400 * SPEEDUPFACT;
+    ...
+}
+LRESULT CALLBACK d3d::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    ...
+    g_sphere[2 + tern].setPower(distance * cos(theta) * SPEEDUPFACT, distance * sin(theta) * SPEEDUPFACT);
+    ...
+}
+```
+d3dUtility.cpp  
+```c++
+int d3d::EnterMsgLoop( bool (*ptr_display)(float timeDelta) ) {
+    double timeDelta = (currTime - lastTime)*0.0007/SPEEDUPFACT;
+}
 ```
 
 #### Modified function
