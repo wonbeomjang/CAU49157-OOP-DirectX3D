@@ -28,6 +28,18 @@ boolean CWall::asIntersected(CSphere& ball)
 void CWall::hitBy(CSphere& ball) 
 ```
 
+*boolean CSphere::asIntersected(CSphere& ball)*  
+We compute distance between two point of center of ball and radius. Set relation between them.  
+
+*void CSphere::hitBy(CSphere& ball)*  
+We compute the velocity of two ball based on the current velocity of ball. We use momentum conservation law. 
+
+*boolean CWall::asIntersected(CSphere& ball)*  
+We compute distance base on one coordinate of center of ball and wall.  
+
+*boolean CWall::asIntersected(CSphere& ball)*  
+Since Wall's position is fixed, We just change the velocity of ball of the vertical component of the wall.
+
 #### Add the factor of controll the FPS of the game
 d3dUtility.h  
 ```c++
@@ -54,6 +66,8 @@ int d3d::EnterMsgLoop( bool (*ptr_display)(float timeDelta) ) {
 }
 ```
 
+By adding *SPEEDUPFACT* we can modify the computational period of interection of ball and wall.
+
 #### Modified function
 virtualLego.cpp  
 ```c++
@@ -69,3 +83,5 @@ g_sphere[2 + tern].setPower(distance * cos(theta) * SPEEDUPFACT, distance * sin(
 tern++;
 tern %= 2;
 ```
+
+By modifying function, we can change the tern of roll.
