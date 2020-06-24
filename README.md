@@ -1,4 +1,5 @@
 # Project#3 : OOP for Billiard Game  
+This repository is for OOP class assignment in Chung-Ang Univ.  
 
 ## Student Infromation  
 *Name*        : Wonbeom Jang 장원범  
